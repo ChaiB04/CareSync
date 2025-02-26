@@ -1,0 +1,11 @@
+variables: 
+    GRADLE_OPTS: "-Dorg.gradle.daemon=false" 
+
+stages:   
+    - build 
+
+build: 
+    stage: build 
+    script: 
+        - cd .\BE
+        - ./gradlew assemble
