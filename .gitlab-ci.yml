@@ -3,8 +3,13 @@ variables:
 
 stages:   
     - build 
+    - sonar
 
 build: 
     stage: build 
     script: 
         - ./gradlew assemble
+
+sonar:
+    stage: sonar
+    script: ./gradlew sonar
