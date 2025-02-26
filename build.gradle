@@ -38,6 +38,9 @@ sonar {
         property "sonar.projectKey", "CareSync"
         property "sonar.projectName", "CareSync"
         property "sonar.qualitygate.wait", true
+        property "sonar.host.url", "http://localhost:9090"
+        property "sonar.token", "sqp_93e157c58452a90110c1aff8dd7c548b10be611c"
+
     }
 }
 
