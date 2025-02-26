@@ -1,13 +1,8 @@
 variables: 
     GRADLE_OPTS: "-Dorg.gradle.daemon=false" 
-    IMAGE_NAME: "your-dockerhub-username/spring-boot-app"
-    CONTAINER_NAME: "caresync-be"
-    DOCKER_HOST: tcp://docker:2375/
 
 services:
   - docker:dind 
-
-image: docker:latest
 
 # before_script:
 #   - docker login -u "$DOCKERHUB_USERNAME" -p "$DOCKERHUB_PASSWORD"
@@ -15,17 +10,24 @@ image: docker:latest
 stages:   
     - build 
     - sonar
+    - deploy
 
 build: 
     stage: build 
     script: 
         - ./gradlew assemble
-        - docker build -t caresync-be-app:latest .
-        - docker push caresync-be-app:latest
 
 sonar:
     stage: sonar
     script: ./gradlew sonar
+
+deploy:
+    stage: deploy
+    only:
+        - main
+    script:
+        - docker-compose -f docker-compose.yml down
+        - docker-compose -f docker-compose.yml up -d
 
 
 
