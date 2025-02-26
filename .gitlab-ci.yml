@@ -7,5 +7,5 @@ stages:
 build: 
     stage: build 
     script: 
-        - cd .\caresync-be\BE
+        - cd .\BE
         - ./gradlew assemble
