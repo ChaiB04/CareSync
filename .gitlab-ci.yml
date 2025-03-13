@@ -21,8 +21,7 @@ sonar:
     stage: sonar
     script: 
      - ./gradlew sonar
-     - if [ "$CI_COMMIT_REF_NAME" == "main" ]; then ./gradlew sonar; else echo "Not on main, skipping SonarQube analysis."; fi
-
+    
 
 deploy:
     stage: deploy
