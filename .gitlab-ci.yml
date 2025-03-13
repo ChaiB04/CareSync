@@ -20,6 +20,7 @@ build:
 sonar:
     stage: sonar
     script: 
+     - ./gradlew build
      - ./gradlew sonar
     
 
