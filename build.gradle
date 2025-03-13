@@ -48,6 +48,7 @@ sonar {
     properties {
         property "sonar.projectKey", "individualsem6_caresync"
         property "sonar.organization", "individualsem6"
+        property "sonar.java.binaries", "build/classes"
         property "sonar.host.url", "https://sonarcloud.io"
         property "sonar.token", "b52a51ce51f0652799e658a282c2dfb289de2e68"
 //                System.getenv('SONAR_TOKEN')
