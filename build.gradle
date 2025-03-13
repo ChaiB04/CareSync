@@ -49,9 +49,32 @@ sonar {
         property "sonar.projectKey", "individualsem6_caresync"
         property "sonar.organization", "individualsem6"
         property "sonar.host.url", "https://sonarcloud.io"
-        property "sonar.token", System.getenv('SONAR_TOKEN')
+        property "sonar.token", "b52a51ce51f0652799e658a282c2dfb289de2e68"
+//                System.getenv('SONAR_TOKEN')
+
+        property "sonar.branch.name", "main"
     }
 }
+
+task runSonarQube {
+    doLast {
+        // Get the current branch name
+        def currentBranch = 'git rev-parse --abbrev-ref HEAD'.execute().text.trim()
+
+        // Only run SonarQube analysis on the 'main' branch
+        if (currentBranch == 'main') {
+            println "Running SonarQube analysis on branch: $currentBranch"
+
+            // Run the SonarQube analysis using the correct Gradle task
+            exec {
+                commandLine './gradlew', 'sonar'
+            }
+        } else {
+            println "Skipping SonarQube analysis as the current branch is: $currentBranch"
+        }
+    }
+}
+
 
 tasks.named('test') {
     useJUnitPlatform()
