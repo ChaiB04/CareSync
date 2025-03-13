@@ -1,12 +1,18 @@
+# First stage: Build the application
+FROM gradle:8-jdk17 AS builder
+WORKDIR /app
+COPY . .
+RUN gradle build --no-daemon
+
+# Second stage: Use a lightweight image to run the application
 FROM openjdk:17-jdk-slim
 LABEL authors="cbaha"
-# Set working directory inside the container
 WORKDIR /app
 
-# Copy the JAR file into the container
-COPY build/libs/*.jar app.jar
+# Copy the JAR file from the builder stage
+COPY --from=builder /app/build/libs/*.jar app.jar
 
-# Expose the port your Spring Boot app runs on
+# Expose the port the Spring Boot app runs on
 EXPOSE 8080
 
 # Run the Spring Boot application
