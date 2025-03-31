@@ -3,6 +3,7 @@ variables:
     IMAGE_NAME: caresync-be-app
     AZURE_REGISTRY: backendsem6.azurecr.io  # Replace with your Azure Container Registry URL
     RESOURCE_GROUP: individual      # Replace with your Azure resource group
+    APP_SERVICE_NAME: caresync-be  # Replace with your App Service name
 
 services:
   - docker:dind 
@@ -54,11 +55,10 @@ push:
     
 
 deploy:
-    stage: deploy
-    script:
-        - echo "worked"
-        # - docker-compose -f docker-compose.yml down
-        # - docker-compose -f docker-compose.yml up -d
-        # - az aks get-credentials --resource-group $RESOURCE_GROUP --name $AKS_CLUSTER
-    only:
-        - main
+  stage: deploy
+  script:
+    - echo "Deploying to Azure App Service..."
+    - az webapp config container set --name ${APP_SERVICE_NAME} --resource-group ${RESOURCE_GROUP} --docker-custom-image-name ${AZURE_REGISTRY}/${IMAGE_NAME}:${CI_COMMIT_SHA} --docker-registry-server-url https://${AZURE_REGISTRY}
+    - az webapp restart --name ${APP_SERVICE_NAME} --resource-group ${RESOURCE_GROUP}
+  only:
+    - main
