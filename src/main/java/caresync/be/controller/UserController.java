@@ -1,7 +1,8 @@
 package caresync.be.controller;
 
 import lombok.AllArgsConstructor;
-import org.apache.catalina.User;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -11,8 +12,18 @@ import org.springframework.web.bind.annotation.RestController;
 @AllArgsConstructor
 public class UserController {
 
+    private final Logger logger = LogManager.getLogger(UserController.class);
+
     @GetMapping()
     public String getUsers() {
-        return "users";
+       try{
+           logger.info("getUsers");
+           return "users";
+       }
+       catch (Exception e){
+           logger.error(e);
+       }
+       logger.warn("outside of try-catch");
+       return "error";
     }
 }
