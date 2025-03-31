@@ -45,8 +45,8 @@ sonar:
 push:
   stage: push
   script:
-    - docker push $AZURE_REGISTRY/$IMAGE_NAME:$CI_COMMIT_SHA
-    - docker push $AZURE_REGISTRY/$IMAGE_NAME:latest
+    - docker push ${AZURE_REGISTRY}/${IMAGE_NAME}:${CI_COMMIT_SHA}
+    - docker push ${AZURE_REGISTRY}/${IMAGE_NAME}:latest
   only:
     - main
     
