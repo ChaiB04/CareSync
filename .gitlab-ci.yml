@@ -29,12 +29,14 @@ build:
         - ./gradlew assemble
 
 build-images:
-    stage: build-images
-    script:
-        - docker build -t $AZURE_REGISTRY/$IMAGE_NAME:$CI_COMMIT_SHA .
-        - docker tag $AZURE_REGISTRY/$IMAGE_NAME:$CI_COMMIT_SHA $AZURE_REGISTRY/$IMAGE_NAME:latest
-    only:
+  stage: build-images
+  script:
+    - docker build -t ${AZURE_REGISTRY}/${IMAGE_NAME}:${CI_COMMIT_SHA} .
+    - docker tag ${AZURE_REGISTRY}/${IMAGE_NAME}:${CI_COMMIT_SHA} ${AZURE_REGISTRY}/${IMAGE_NAME}:latest
+    - docker images  # To list available images and check if it exists
+  only:
     - main
+
 
 sonar:
     stage: sonar
