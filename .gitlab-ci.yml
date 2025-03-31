@@ -8,9 +8,6 @@ variables:
 services:
   - docker:dind 
 
-# before_script:
-#   - docker login -u "$DOCKERHUB_USERNAME" -p "$DOCKERHUB_PASSWORD"
-
 stages:   
     - build 
     - build-images
@@ -34,16 +31,18 @@ build-images:
   script:
     - docker build -t ${AZURE_REGISTRY}/${IMAGE_NAME}:${CI_COMMIT_SHA} .
     - docker tag ${AZURE_REGISTRY}/${IMAGE_NAME}:${CI_COMMIT_SHA} ${AZURE_REGISTRY}/${IMAGE_NAME}:latest
-    - docker images  # To list available images and check if it exists
   only:
     - main
 
 
 sonar:
-    stage: sonar
-    script: 
+  stage: sonar
+  script: 
      - ./gradlew build
      - ./gradlew sonar
+  only:
+    - main
+    
 
 push:
   stage: push
@@ -58,7 +57,7 @@ deploy:
   stage: deploy
   script:
     - echo "Deploying to Azure App Service..."
-    - az webapp config container set --name ${APP_SERVICE_NAME} --resource-group ${RESOURCE_GROUP} --docker-custom-image-name ${AZURE_REGISTRY}/${IMAGE_NAME}:${CI_COMMIT_SHA} --docker-registry-server-url https://${AZURE_REGISTRY}
+    - az webapp config container set --name ${APP_SERVICE_NAME} --resource-group ${RESOURCE_GROUP} --docker-custom-image-name ${AZURE_REGISTRY}/${IMAGE_NAME}:latest --docker-registry-server-url https://${AZURE_REGISTRY}
     - az webapp restart --name ${APP_SERVICE_NAME} --resource-group ${RESOURCE_GROUP}
   only:
     - main
