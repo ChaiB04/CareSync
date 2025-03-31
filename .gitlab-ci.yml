@@ -1,5 +1,8 @@
 variables: 
     GRADLE_OPTS: "-Dorg.gradle.daemon=false" 
+    IMAGE_NAME: caresync
+    AZURE_REGISTRY: backendsem6.azurecr.io  # Replace with your Azure Container Registry URL
+    RESOURCE_GROUP: individual      # Replace with your Azure resource group
 
 services:
   - docker:dind 
@@ -9,32 +12,51 @@ services:
 
 stages:   
     - build 
+    - build-images
     - sonar
+    - push
     - deploy
+
+
+before_script:
+  - az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET --tenant $AZURE_TENANT_ID
+  - az acr login --name $AZURE_REGISTRY
+
 
 build: 
     stage: build 
     script: 
         - ./gradlew assemble
 
+build-images:
+    stage: build-images
+    script:
+        - docker build -t $AZURE_REGISTRY/$IMAGE_NAME:$CI_COMMIT_SHA .
+        - docker tag $AZURE_REGISTRY/$IMAGE_NAME:$CI_COMMIT_SHA $AZURE_REGISTRY/$IMAGE_NAME:latest
+    only:
+    - main
+
 sonar:
     stage: sonar
     script: 
      - ./gradlew build
      - ./gradlew sonar
+
+push:
+  stage: push
+  script:
+    - docker push $AZURE_REGISTRY/$IMAGE_NAME:$CI_COMMIT_SHA
+    - docker push $AZURE_REGISTRY/$IMAGE_NAME:latest
+  only:
+    - main
     
 
 deploy:
     stage: deploy
+    script:
+        - echo "worked"
+        # - docker-compose -f docker-compose.yml down
+        # - docker-compose -f docker-compose.yml up -d
+        # - az aks get-credentials --resource-group $RESOURCE_GROUP --name $AKS_CLUSTER
     only:
         - main
-    script:
-        - docker-compose -f docker-compose.yml down
-        - docker-compose -f docker-compose.yml up -d
-
-
-
- 
-
-
-
