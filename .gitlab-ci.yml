@@ -1,6 +1,6 @@
 variables: 
     GRADLE_OPTS: "-Dorg.gradle.daemon=false" 
-    IMAGE_NAME: caresync
+    IMAGE_NAME: caresync-be-app
     AZURE_REGISTRY: backendsem6.azurecr.io  # Replace with your Azure Container Registry URL
     RESOURCE_GROUP: individual      # Replace with your Azure resource group
 
