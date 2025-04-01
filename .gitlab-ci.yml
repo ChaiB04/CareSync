@@ -17,9 +17,9 @@ stages:
 
 
 before_script:
-  - if [ "$CI_COMMIT_BRANCH" != "main" ]; then exit 0; fi
-  - az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET --tenant $AZURE_TENANT_ID
-  - az acr login --name $AZURE_REGISTRY
+  - if ($env:CI_COMMIT_BRANCH -ne "main") { exit 0 }
+  - az login --service-principal -u $env:AZURE_CLIENT_ID -p $env:AZURE_CLIENT_SECRET --tenant $env:AZURE_TENANT_ID
+  - az acr login --name $env:AZURE_REGISTRY
 
 
 build: 
