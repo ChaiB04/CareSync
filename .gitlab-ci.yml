@@ -10,16 +10,20 @@ services:
 
 stages:   
     - build 
+    - az-login
     - build-images
     - sonar
     - push
     - deploy
 
 
-before_script:
-  - if ($env:CI_COMMIT_BRANCH -ne "main") { exit 0 }
-  - az login --service-principal -u $env:AZURE_CLIENT_ID -p $env:AZURE_CLIENT_SECRET --tenant $env:AZURE_TENANT_ID
-  - az acr login --name $env:AZURE_REGISTRY
+az-login:
+  stage: az-login
+  before_script:
+    - az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET --tenant $AZURE_TENANT_ID
+    - az acr login --name $AZURE_REGISTRY
+  only:
+    - main
 
 
 build: 
