@@ -10,6 +10,7 @@ services:
 
 stages:   
     - build 
+    - tests
     - az-login
     - build-images
     - sonar
@@ -30,6 +31,11 @@ build:
     stage: build 
     script: 
         - ./gradlew assemble
+
+test:
+  stage: tests
+  script:
+    - ./gradlew test
 
 build-images:
   stage: build-images
