@@ -10,5 +10,6 @@ public class TriageRecord {
     Date date;
     String complaint;
     String initialAssessment;
+    ABCDEAssessment abcdeAssessment;
     int urgencyFactor;
 }
