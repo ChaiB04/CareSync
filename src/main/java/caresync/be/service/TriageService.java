@@ -1,5 +1,7 @@
 package caresync.be.service;
 
+import caresync.be.domain.TriageRecord;
+
 public interface TriageService {
-   int assignPriorityCombined(String airway, String breathing, String circulation, String disability, String exposure);
+   int assignPriorityCombined(TriageRecord triageRecord) ;
 }

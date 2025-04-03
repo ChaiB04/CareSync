@@ -1,5 +1,6 @@
 package caresync.be.controller;
 
+import caresync.be.controller.converter.TriageRecordConverter;
 import caresync.be.controller.dto.TriageRequest;
 import caresync.be.controller.dto.TriageResponse;
 import caresync.be.service.TriageService;
@@ -27,11 +28,7 @@ public class TriageController {
     @PostMapping()
     public String assessTriage(@RequestBody TriageRequest request) {
 
-        int priority = triageService.assignPriorityCombined(request.getAbcdeAssessment().getAirway(),
-                request.getAbcdeAssessment().getBreathing(),
-                request.getAbcdeAssessment().getCirculation(),
-                request.getAbcdeAssessment().getDisability(),
-                request.getAbcdeAssessment().getExposure());
+        int priority = triageService.assignPriorityCombined(TriageRecordConverter.triageRequestToTriageRecord(request));
         return "Patient Priority Level: " + priority + " \n visual assessment: " + request.getInitialAssessment();
 
     }

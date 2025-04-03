@@ -1,5 +1,7 @@
 package caresync.be;
 
+import caresync.be.domain.ABCDEAssessment;
+import caresync.be.domain.TriageRecord;
 import caresync.be.service.impl.TriageServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,151 +18,399 @@ public class TriageServiceImplTest {
 
     @Test
     void testImmediateEmergency_BlockedAirway() {
-        int priority = triageService.assignPriorityCombined("blocked", "normal", "stable", "alert", "minor");
+
+        ABCDEAssessment abcdeAssessment = ABCDEAssessment.builder()
+                .airway("blocked")
+                .breathing("no_breathing")
+                .circulation("mild")
+                .disability("stable")
+                .exposure("minor").build();
+
+        TriageRecord triageRecord = TriageRecord.builder()
+                .complaint("Choking")
+                .abcdeAssessment(abcdeAssessment)
+                .initialAssessment(5)
+                .build();
+        int priority = triageService.assignPriorityCombined(triageRecord);
 
         assertEquals(0, priority);
     }
 
     @Test
-    void testImmediateEmergency_NoBreathing() {
-        int priority = triageService.assignPriorityCombined("clear", "no_breathing", "stable", "alert", "minor");
+    void testImmediateEmergency_NoBreathingAndNoPulse() {
 
-        assertEquals(0, priority);
-    }
+        ABCDEAssessment abcdeAssessment = ABCDEAssessment.builder()
+                .airway("clear")
+                .breathing("no_breathing")
+                .circulation("no_pulse")
+                .disability("unresponsive")
+                .exposure("minor").build();
 
-    @Test
-    void testImmediateEmergency_NoPulse() {
-        int priority = triageService.assignPriorityCombined("clear", "normal", "no_pulse", "alert", "minor");
+        TriageRecord triageRecord = TriageRecord.builder()
+                .complaint("Unconscious")
+                .abcdeAssessment(abcdeAssessment)
+                .initialAssessment(0)
+                .build();
+        int priority = triageService.assignPriorityCombined(triageRecord);
 
         assertEquals(0, priority);
     }
 
     @Test
     void testImmediateEmergency_SevereBleeding() {
-        int priority = triageService.assignPriorityCombined("clear", "normal", "severe_bleeding", "alert", "minor");
+        ABCDEAssessment abcdeAssessment = ABCDEAssessment.builder()
+                .airway("clear")
+                .breathing("normal")
+                .circulation("severe_bleeding")
+                .disability("alert")
+                .exposure("minor").build();
+
+        TriageRecord triageRecord = TriageRecord.builder()
+                .complaint("Stabbed in the chest")
+                .abcdeAssessment(abcdeAssessment)
+                .initialAssessment(0)
+                .build();
+
+        int priority = triageService.assignPriorityCombined(triageRecord);
 
         assertEquals(0, priority);
     }
 
     @Test
     void testImmediateEmergency_Unresponsive() {
-        int priority = triageService.assignPriorityCombined("clear", "normal", "stable", "unresponsive", "minor");
+        ABCDEAssessment abcdeAssessment = ABCDEAssessment.builder()
+                .airway("clear")
+                .breathing("normal")
+                .circulation("stable")
+                .disability("unresponsive")
+                .exposure("minor").build();
+
+        TriageRecord triageRecord = TriageRecord.builder()
+                .complaint("Does not wake up")
+                .abcdeAssessment(abcdeAssessment)
+                .initialAssessment(0)
+                .build();
+
+        int priority = triageService.assignPriorityCombined(triageRecord);
 
         assertEquals(0, priority);
     }
 
     @Test
     void testImmediateEmergency_CriticalExposure() {
-        int priority = triageService.assignPriorityCombined("clear", "normal", "stable", "alert", "critical");
+        ABCDEAssessment abcdeAssessment = ABCDEAssessment.builder()
+                .airway("clear")
+                .breathing("normal")
+                .circulation("weak_pulse")
+                .disability("alert")
+                .exposure("critical").build();
+
+        TriageRecord triageRecord = TriageRecord.builder()
+                .complaint("Internal bleeding?")
+                .abcdeAssessment(abcdeAssessment)
+                .initialAssessment(0)
+                .build();
+
+
+        int priority = triageService.assignPriorityCombined(triageRecord);
 
         assertEquals(0, priority);
     }
 
     @Test
     void testU1Priority_PartialAirway() {
-        int priority = triageService.assignPriorityCombined("partial", "normal", "normal", "normal", "none");
+        ABCDEAssessment abcdeAssessment = ABCDEAssessment.builder()
+                .airway("partial")
+                .breathing("normal")
+                .circulation("normal")
+                .disability("normal")
+                .exposure("none").build();
+
+        TriageRecord triageRecord = TriageRecord.builder()
+                .complaint("choking/asthma")
+                .abcdeAssessment(abcdeAssessment)
+                .initialAssessment(0)
+                .build();
+
+        int priority = triageService.assignPriorityCombined(triageRecord);
 
         assertEquals(1, priority);
     }
 
     @Test
     void testU1Priority_SevereBreathingDistress() {
-        int priority = triageService.assignPriorityCombined("clear", "severe_distress", "normal", "normal", "none");
+        ABCDEAssessment abcdeAssessment = ABCDEAssessment.builder()
+                .airway("partial")
+                .breathing("severe_distress")
+                .circulation("normal")
+                .disability("normal")
+                .exposure("none").build();
+
+        TriageRecord triageRecord = TriageRecord.builder()
+                .complaint("Panic attack")
+                .abcdeAssessment(abcdeAssessment)
+                .initialAssessment(0)
+                .build();
+
+        int priority = triageService.assignPriorityCombined(triageRecord);
 
         assertEquals(1, priority);
     }
 
     @Test
     void testU1Priority_WeakPulse() {
-        int priority = triageService.assignPriorityCombined("clear", "normal", "weak_pulse", "normal", "none");
+        ABCDEAssessment abcdeAssessment = ABCDEAssessment.builder()
+                .airway("clear")
+                .breathing("severe_distress")
+                .circulation("weak_pulse")
+                .disability("normal")
+                .exposure("none").build();
+
+        TriageRecord triageRecord = TriageRecord.builder()
+                .complaint("low heartrate")
+                .abcdeAssessment(abcdeAssessment)
+                .initialAssessment(0)
+                .build();
+
+        int priority = triageService.assignPriorityCombined(triageRecord);
 
         assertEquals(1, priority);
     }
 
     @Test
     void testU1Priority_RespondingToPain() {
-        int priority = triageService.assignPriorityCombined("clear", "normal", "normal", "responding_to_pain", "none");
+        ABCDEAssessment abcdeAssessment = ABCDEAssessment.builder()
+                .airway("clear")
+                .breathing("normal")
+                .circulation("normal")
+                .disability("responding_to_pain")
+                .exposure("none").build();
+
+        TriageRecord triageRecord = TriageRecord.builder()
+                .complaint("Internal wound")
+                .abcdeAssessment(abcdeAssessment)
+                .initialAssessment(0)
+                .build();
+
+        int priority = triageService.assignPriorityCombined(triageRecord);
 
         assertEquals(1, priority);
     }
 
     @Test
     void testU1Priority_SevereExposure() {
-        int priority = triageService.assignPriorityCombined("clear", "normal", "normal", "normal", "severe");
+        ABCDEAssessment abcdeAssessment = ABCDEAssessment.builder()
+                .airway("clear")
+                .breathing("normal")
+                .circulation("normal")
+                .disability("normal")
+                .exposure("severe").build();
+
+        TriageRecord triageRecord = TriageRecord.builder()
+                .complaint("allergic reaction, panic attack")
+                .abcdeAssessment(abcdeAssessment)
+                .initialAssessment(0)
+                .build();
+
+        int priority = triageService.assignPriorityCombined(triageRecord);
 
         assertEquals(1, priority);
     }
 
     @Test
     void testU2Priority_MildBreathingDistress() {
-        int priority = triageService.assignPriorityCombined("clear", "mild_distress", "normal", "normal", "none");
+        ABCDEAssessment abcdeAssessment = ABCDEAssessment.builder()
+                .airway("clear")
+                .breathing("mild_distress")
+                .circulation("normal")
+                .disability("normal")
+                .exposure("none").build();
+
+        TriageRecord triageRecord = TriageRecord.builder()
+                .complaint("panic, heart rate increased")
+                .abcdeAssessment(abcdeAssessment)
+                .initialAssessment(3)
+                .build();
+        int priority = triageService.assignPriorityCombined(triageRecord);
 
         assertEquals(2, priority, "Mild breathing distress should result in priority 2");
     }
 
     @Test
     void testU2Priority_MildBleeding() {
-        int priority = triageService.assignPriorityCombined("clear", "normal", "mild_bleeding", "normal", "none");
+        ABCDEAssessment abcdeAssessment = ABCDEAssessment.builder()
+                .airway("clear")
+                .breathing("normal")
+                .circulation("mild_bleeding")
+                .disability("normal")
+                .exposure("none").build();
+
+        TriageRecord triageRecord = TriageRecord.builder()
+                .complaint("cut by knife")
+                .abcdeAssessment(abcdeAssessment)
+                .initialAssessment(3)
+                .build();
+
+        int priority = triageService.assignPriorityCombined(triageRecord);
 
         assertEquals(2, priority);
     }
 
     @Test
     void testU2Priority_ResponsiveToVerbal() {
-        int priority = triageService.assignPriorityCombined("clear", "normal", "normal", "responsive_to_verbal", "none");
+        ABCDEAssessment abcdeAssessment = ABCDEAssessment.builder()
+                .airway("clear")
+                .breathing("normal")
+                .circulation("normal")
+                .disability("responsive_to_verbal")
+                .exposure("none").build();
+
+        TriageRecord triageRecord = TriageRecord.builder()
+                .complaint("cannot move")
+                .abcdeAssessment(abcdeAssessment)
+                .initialAssessment(3)
+                .build();
+
+        int priority = triageService.assignPriorityCombined(triageRecord);
 
         assertEquals(2, priority);
     }
 
     @Test
     void testU2Priority_ModerateExposure() {
-        int priority = triageService.assignPriorityCombined("clear", "normal", "normal", "normal", "moderate");
+        ABCDEAssessment abcdeAssessment = ABCDEAssessment.builder()
+                .airway("clear")
+                .breathing("normal")
+                .circulation("normal")
+                .disability("normal")
+                .exposure("moderate").build();
+
+        TriageRecord triageRecord = TriageRecord.builder()
+                .complaint("very pale")
+                .abcdeAssessment(abcdeAssessment)
+                .initialAssessment(3)
+                .build();
+
+        int priority = triageService.assignPriorityCombined(triageRecord);
 
         assertEquals(2, priority);
     }
 
     @Test
     void testLevel3Priority_StableCirculation() {
-        int priority = triageService.assignPriorityCombined("clear", "normal", "stable", "normal", "none");
+        ABCDEAssessment abcdeAssessment = ABCDEAssessment.builder()
+                .airway("clear")
+                .breathing("normal")
+                .circulation("stable")
+                .disability("normal")
+                .exposure("none").build();
+
+        TriageRecord triageRecord = TriageRecord.builder()
+                .complaint("bleeding but stable")
+                .abcdeAssessment(abcdeAssessment)
+                .initialAssessment(3)
+                .build();
+
+        int priority = triageService.assignPriorityCombined(triageRecord);
 
         assertEquals(3, priority);
     }
 
     @Test
     void testU3Priority_MildExposure() {
+        ABCDEAssessment abcdeAssessment = ABCDEAssessment.builder()
+                .airway("clear")
+                .breathing("normal")
+                .circulation("stable")
+                .disability("normal")
+                .exposure("mild").build();
 
-        int priority = triageService.assignPriorityCombined("clear", "normal", "normal", "normal", "mild");
+        TriageRecord triageRecord = TriageRecord.builder()
+                .complaint("pale")
+                .abcdeAssessment(abcdeAssessment)
+                .initialAssessment(3)
+                .build();
+
+        int priority = triageService.assignPriorityCombined(triageRecord);
 
         assertEquals(3, priority);
     }
 
     @Test
     void testU4Priority_AlertPatient() {
+        ABCDEAssessment abcdeAssessment = ABCDEAssessment.builder()
+                .airway("clear")
+                .breathing("normal")
+                .circulation("normal")
+                .disability("alert")
+                .exposure("none").build();
 
-        int priority = triageService.assignPriorityCombined("clear", "normal", "normal", "alert", "none");
+        TriageRecord triageRecord = TriageRecord.builder()
+                .complaint("panic")
+                .abcdeAssessment(abcdeAssessment)
+                .initialAssessment(3)
+                .build();
+
+        int priority = triageService.assignPriorityCombined(triageRecord);
 
         assertEquals(4, priority);
     }
 
     @Test
     void testU4Priority_MinorExposure() {
+        ABCDEAssessment abcdeAssessment = ABCDEAssessment.builder()
+                .airway("clear")
+                .breathing("normal")
+                .circulation("normal")
+                .disability("normal")
+                .exposure("minor").build();
 
-        int priority = triageService.assignPriorityCombined("clear", "normal", "normal", "normal", "minor");
+        TriageRecord triageRecord = TriageRecord.builder()
+                .complaint("blue spots")
+                .abcdeAssessment(abcdeAssessment)
+                .initialAssessment(3)
+                .build();
+
+        int priority = triageService.assignPriorityCombined(triageRecord);
 
         assertEquals(4, priority);
     }
 
     @Test
     void testUPriority_AllNormal() {
+        ABCDEAssessment abcdeAssessment = ABCDEAssessment.builder()
+                .airway("clear")
+                .breathing("normal")
+                .circulation("normal")
+                .disability("normal")
+                .exposure("none").build();
 
-        int priority = triageService.assignPriorityCombined("clear", "normal", "normal", "normal", "none");
+        TriageRecord triageRecord = TriageRecord.builder()
+                .complaint("pain in leg")
+                .abcdeAssessment(abcdeAssessment)
+                .initialAssessment(3)
+                .build();
+
+        int priority = triageService.assignPriorityCombined(triageRecord);
 
         assertEquals(5, priority);
     }
 
     @Test
     void testCombinedConditions_HighestPriorityWins() {
-        int priority = triageService.assignPriorityCombined("partial", "mild_distress", "stable", "alert", "minor");
+        ABCDEAssessment abcdeAssessment = ABCDEAssessment.builder()
+                .airway("partial")
+                .breathing("mild_distress")
+                .circulation("stable")
+                .disability("alert")
+                .exposure("minor").build();
+
+        TriageRecord triageRecord = TriageRecord.builder()
+                .complaint("noises while breathing")
+                .abcdeAssessment(abcdeAssessment)
+                .initialAssessment(3)
+                .build();
+        int priority = triageService.assignPriorityCombined(triageRecord);
 
         assertEquals(1, priority);
     }

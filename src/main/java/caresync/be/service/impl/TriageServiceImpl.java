@@ -1,35 +1,36 @@
 package caresync.be.service.impl;
 
+import caresync.be.domain.ABCDEAssessment;
+import caresync.be.domain.TriageRecord;
 import caresync.be.service.TriageService;
 import org.springframework.stereotype.Service;
 
 @Service
 public class TriageServiceImpl implements TriageService {
 
-    public int assignPriorityCombined(String airway, String breathing, String circulation, String disability, String exposure) {
-        if (isImmediateEmergency(airway, breathing, circulation, disability, exposure)) {
+    public int assignPriorityCombined(TriageRecord triageRecord) {
+        if (isImmediateEmergency(triageRecord.getAbcdeAssessment())) {
             return 0;
         }
 
         int priority = 5;
 
-        // Process each vital sign and adjust priority as needed
-        priority = assessAirway(airway, priority);
-        priority = assessBreathing(breathing, priority);
-        priority = assessCirculation(circulation, priority);
-        priority = assessDisability(disability, priority);
-        priority = assessExposure(exposure, priority);
+        priority = assessAirway(triageRecord.getAbcdeAssessment().getAirway(), priority);
+        priority = assessBreathing(triageRecord.getAbcdeAssessment().getBreathing(), priority);
+        priority = assessCirculation(triageRecord.getAbcdeAssessment().getCirculation(), priority);
+        priority = assessDisability(triageRecord.getAbcdeAssessment().getDisability(), priority);
+        priority = assessExposure(triageRecord.getAbcdeAssessment().getExposure(), priority);
 
         return priority;
     }
 
-    private boolean isImmediateEmergency(String airway, String breathing, String circulation, String disability, String exposure) {
-        return "blocked".equalsIgnoreCase(airway) ||
-                "no_breathing".equalsIgnoreCase(breathing) ||
-                "no_pulse".equalsIgnoreCase(circulation) ||
-                "severe_bleeding".equalsIgnoreCase(circulation) ||
-                "unresponsive".equalsIgnoreCase(disability) ||
-                "critical".equalsIgnoreCase(exposure);
+    private boolean isImmediateEmergency(ABCDEAssessment abcdeAssessment) {
+        return "blocked".equalsIgnoreCase(abcdeAssessment.getAirway()) ||
+                "no_breathing".equalsIgnoreCase(abcdeAssessment.getBreathing()) ||
+                "no_pulse".equalsIgnoreCase(abcdeAssessment.getCirculation()) ||
+                "severe_bleeding".equalsIgnoreCase(abcdeAssessment.getCirculation()) ||
+                "unresponsive".equalsIgnoreCase(abcdeAssessment.getDisability()) ||
+                "critical".equalsIgnoreCase(abcdeAssessment.getExposure());
     }
 
     private int assessAirway(String airway, int currentPriority) {
